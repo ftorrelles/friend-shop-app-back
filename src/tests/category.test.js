@@ -1,5 +1,6 @@
 const request = require("supertest");
 const app = require("../app");
+require("../models");
 let categoryId;
 let token;
 
@@ -15,7 +16,7 @@ beforeAll(async () => {
 });
 test("POST /api/v1/categories should create a categories", async () => {
     const newCategory = {
-        name: "technology",
+        name: "computers",
     };
     const res = await request(app)
         .post("/api/v1/categories")
@@ -34,7 +35,7 @@ test("GET ALL /api/v1/categories should return all categories", async () => {
 
 test("PUT /api/v1/categories/:id should update one category", async () => {
     const body = {
-        name: "technology",
+        name: "computers",
     };
     const res = await request(app)
         .put(`/api/v1/categories/${categoryId}`)

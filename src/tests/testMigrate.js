@@ -1,7 +1,9 @@
 const User = require("../models/User");
 const sequelize = require("../utils/connection");
+require("../models");
 require("../models/User");
 require("../models/Category");
+require("../models/Product");
 
 const main = async () => {
     try {
