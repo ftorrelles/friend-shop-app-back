@@ -4,6 +4,7 @@ require("../models");
 require("../models/User");
 require("../models/Category");
 require("../models/Product");
+require("../models/Cart");
 
 const main = async () => {
     try {

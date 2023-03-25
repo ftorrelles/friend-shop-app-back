@@ -1,8 +1,8 @@
 const request = require("supertest");
 const app = require("../app");
-const ProductImg = require("../models/ProductImg");
+const Product = require("../models/Product");
 require("../models");
-let productId;
+let cartId;
 let token;
 
 beforeAll(async () => {
@@ -15,57 +15,50 @@ beforeAll(async () => {
         .send(credentials);
     token = res.body.token;
 });
-test("POST /api/v1/products should create a products", async () => {
-    const newProduct = {
+test("POST /api/v1/carts should create a cart", async () => {
+    const newProduct = await Product.create({
         title: "MacBook Air 13.3'' Laptop - Apple M1 chip",
         description:
             "It’s here. Our first chip designed specifically for Mac. Packed with an astonishing 16 billion transistors, the Apple M1 system on a chip (SoC) integrates the CPU, GPU, Neural Engine, I/O, and so much more onto a single tiny chip. With incredible performance, custom technologies, and industry-leading power efficiency, M1 is not just a next step for Mac — it’s another level entirely.",
         price: 1399,
-    };
-    const res = await request(app)
-        .post("/api/v1/products")
-        .send(newProduct)
-        .set("Authorization", `Bearer ${token}`);
-    productId = res.body.id;
-    expect(res.status).toBe(201);
-    expect(res.body.title).toBe(newProduct.title);
-});
-
-test("GET ALL /api/v1/products should return all products", async () => {
-    const res = await request(app).get("/api/v1/products");
-    expect(res.status).toBe(200);
-    expect(res.body).toHaveLength(1);
-});
-
-test("POST /api/v1/products/:id/images should set the products images", async () => {
-    const image = await ProductImg.create({
-        url: "djiweji",
-        filename: "jijis",
     });
+    const newCart = {
+        quantity: 4,
+        productId: newProduct.id,
+    };
     const res = await request(app)
-        .post(`/api/v1/products/${productId}/images`)
-        .send([image.id])
+        .post("/api/v1/carts")
+        .send(newCart)
         .set("Authorization", `Bearer ${token}`);
-    await image.destroy();
+    cartId = res.body.id;
+    await newProduct.destroy();
+    expect(res.status).toBe(201);
+    expect(res.body.quantity).toBe(newCart.quantity);
+});
+
+test("GET ALL /api/v1/carts should return all carts", async () => {
+    const res = await request(app)
+        .get("/api/v1/carts")
+        .set("Authorization", `Bearer ${token}`);
     expect(res.status).toBe(200);
     expect(res.body).toHaveLength(1);
 });
 
-test("PUT /api/v1/products/:id should update one product", async () => {
+test("PUT /api/v1/carts/:id should update one cart", async () => {
     const body = {
-        title: "MacBook Air 13.3'' Laptop - Apple M1 chip",
+        quantity: 5,
     };
     const res = await request(app)
-        .put(`/api/v1/products/${productId}`)
+        .put(`/api/v1/carts/${cartId}`)
         .send(body)
         .set("Authorization", `Bearer ${token}`);
     expect(res.status).toBe(200);
-    expect(res.body.title).toBe(body.title);
+    expect(res.body.quantity).toBe(body.quantity);
 });
 
-test("DELETE /api/v1/products/:id should delete one product", async () => {
+test("DELETE /api/v1/carts/:id should delete one cart", async () => {
     const res = await request(app)
-        .delete(`/api/v1/products/${productId}`)
+        .delete(`/api/v1/carts/${cartId}`)
         .set("Authorization", `Bearer ${token}`);
     expect(res.status).toBe(204);
 });
