@@ -8,10 +8,11 @@ const {
 } = require("../controllers/product.controllers");
 const express = require("express");
 const verifyJWT = require("../utils/verifyJWT");
+const verifyAdmin = require("../utils/verifyAdmin");
 
 const productRouter = express.Router();
 
-productRouter.route("/").get(getAll).post(verifyJWT, create);
+productRouter.route("/").get(getAll).post(verifyJWT, verifyAdmin, create);
 
 productRouter
     .route("/:id")

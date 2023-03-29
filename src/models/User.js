@@ -24,6 +24,7 @@ const User = sequelize.define("user", {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    // role: default: user --- admin
 });
 
 User.beforeCreate(async (user) => {
